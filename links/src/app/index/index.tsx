@@ -75,8 +75,13 @@ export default function Index () {
   return (
      <View style={styles.container}>
        <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.push({ pathname: "/profile" })} style={styles.profileButton}>
+          <MaterialIcons name="person" size={28} color={colors.gray[200]} />
+        </TouchableOpacity>
+
         <Image source={require("@/assets/logo.png")} style={styles.logo} /> 
-        <TouchableOpacity onPress={() => router.navigate("/add")}> 
+
+        <TouchableOpacity onPress={() => router.push({ pathname: "/add" })}> 
           <MaterialIcons name="add" size={32} color={colors.green[300]} />
         </TouchableOpacity>
       </View>

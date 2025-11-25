@@ -28,6 +28,11 @@ export const styles = StyleSheet.create({
         height: 32, //Altura
         width: 38, //Largura
     },
+    profileButton: {
+        padding: 6,
+        marginRight: 8,
+        borderRadius: 8,
+    },
     links: { 
         borderTopWidth: 1,
         borderTopColor: colors.gray[600],
