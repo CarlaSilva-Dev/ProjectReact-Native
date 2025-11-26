@@ -1,134 +1,67 @@
-import { useState, useCallback } from "react"
-import { View, Image, TouchableOpacity, FlatList, Modal, Text, Alert, Linking } from "react-native" //TouchableOpacity é um componente de toque de efeito visual
-import { MaterialIcons } from "@expo/vector-icons" //Importação da Biblioteca de Icones
-
-import { styles } from "./styles"
+import React from "react"
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native"
+import { useRouter } from "expo-router"
 import { colors } from "@/app/styles/colors"
-import { categories } from "@/utils/categories" 
-import { linkStorage, LinkStorage } from "@/storage/link-storage"
 
-import { Link } from "@/components/link"
-import { Option } from "@/components/option"
-import { Categories } from "@/components/categories"
-import { router, useFocusEffect } from "expo-router"
+export default function Index() {
+  const router = useRouter()
 
-
-//Criando um Componente botão
-export default function Index () { 
-    const[showModal, setShowModal] = useState(false)
-    const [link, setLink] = useState<LinkStorage>({} as LinkStorage)
-    const [links, setLinks] = useState<LinkStorage[]>([])
-    const [category, setCategory] = useState (categories[0].name)
-
-    
-    async function getLinks(){
-      try{
-        const response = await linkStorage.get()
-        
-        const filtered = response.filter(( link ) => link.category === category)// Constante para filtrar links de acordo com a categoria selecionada.
-        
-        setLinks(filtered)
-      } catch (error){
-        Alert.alert("Erro", "Não foi possível listar os Links")
-      }
-    }
-
-    async function linkRemove(){
-      try{
-        await linkStorage.remove(link.id)
-        getLinks()
-        setShowModal(false)
-      }catch (error) {
-        Alert.alert("Erro", "Não foi possível excluir")
-        console.log(error)
-      }
-    }
-
-    function handleDetails(selected: LinkStorage){
-      setShowModal(true)
-      setLink(selected)
-    }
-
-     function handleRemove() {
-
-        Alert.alert("Excluir", "Deseja realmente excluir?", [
-          {style: "cancel", text:"Não"},
-          {text: "Sim", onPress: linkRemove}
-        ])
-      }
-
-  async function handleOpen(){
-    try{
-      await Linking.openURL(link.url)
-    }catch (error){
-      Alert.alert("Link", "Não foi possível abrir o link")
-      console.log(error)
-    }
-  }
-
-
-  useFocusEffect(useCallback(() => {
-    getLinks()
-    }, [category])
-  )
-  
   return (
-     <View style={styles.container}>
-       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.push({ pathname: "/profile" })} style={styles.profileButton}>
-          <MaterialIcons name="person" size={28} color={colors.gray[200]} />
-        </TouchableOpacity>
+    <View style={styles.container}>
+      <Image source={require("@/assets/logo.png")} style={styles.logo} resizeMode="contain" />
 
-        <Image source={require("@/assets/logo.png")} style={styles.logo} /> 
+      <Text style={styles.title}>Bem-vindo ao Links+</Text>
 
-        <TouchableOpacity onPress={() => router.push({ pathname: "/add" })}> 
-          <MaterialIcons name="add" size={32} color={colors.green[300]} />
-        </TouchableOpacity>
-      </View>
+      <Text style={styles.description}>
+       
 
-      <Categories onChange={setCategory}  selected={category}/>
-
-  
-    <FlatList<LinkStorage>
-        data={links}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-      <Link
-        name={item.name} 
-        url={item.url}
-        onDetails={() => handleDetails(item)}
-      />
-    )}
-
-      style={styles.links}
-      contentContainerStyle={styles.linksContent}
-      showsVerticalScrollIndicator={false}
-      />
-
-      <Modal transparent visible={showModal} animationType="slide">
-        <View style={styles.modal}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalCategory}>{link.category}</Text>
-
-              <TouchableOpacity onPress={() => setShowModal(false)}>
-                 <MaterialIcons 
-                 name="close" size={20} 
-                 color={colors.gray[400]}/>
-              </TouchableOpacity>
-            </View>
-
-              <Text style={styles.modalLinkName}>{link.name}</Text>
-              <Text style={styles.modalUrl}>{link.url}</Text>
-
-            <View style={styles.modalFooter}>
-              <Option name="Excluir"  icon="delete" variant="secondary" onPress={handleRemove}  />
-              <Option name="Abrir"  icon="language"  onPress={handleOpen}/>
-            </View>
-          </View>
-        </View>
-      </Modal>
+        Organize seus links favoritos de forma rápida, prática e segura.🚀
+      </Text>
+      <TouchableOpacity style={styles.button} onPress={() => router.push({ pathname: '/main' } as any)}>
+        <Text style={styles.buttonText}>Entrar</Text>
+      </TouchableOpacity>
+      
     </View>
-    )
-
+  )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.gray[900],
+    padding: 20,
+  },
+  title: {
+    color: '#fff',
+    fontSize: 28,
+    marginBottom: 24,
+  },
+  description: {
+    color: '#cbd5e1',
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
+    lineHeight: 22,
+    alignSelf: 'center',
+    maxWidth: 520,
+  },
+  logo: {
+    width: 140,
+    height: 80,
+    marginBottom: 18,
+    opacity: 0.95,
+  },
+  button: {
+    backgroundColor: '#2DD4BF',
+    paddingVertical: 14,
+    paddingHorizontal: 40,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: '#072113',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+})
